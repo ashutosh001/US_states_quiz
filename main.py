@@ -14,11 +14,15 @@ tim.up()
 tim.hideturtle()
 is_game_on = True
 correct_response = list()
+not_answered = list()
 
 while is_game_on:
     if len(correct_response) == 50:
         is_game_on = False
     _state = screen.textinput(title=f"Correct {len(correct_response)}/50",prompt="Name a state")
+
+    if _state == "exit":
+        is_game_on = False
 
     if not data[data.state == _state.capitalize()].empty and _state not in correct_response:
         correct_response.append(_state)
@@ -27,4 +31,11 @@ while is_game_on:
         tim.goto(x_axis,y_axis)
         tim.write(_state.capitalize())
 
-screen.exitonclick()
+for state in data.state.to_list():
+    if state not in correct_response:
+        not_answered.append(state)
+print(not_answered)
+
+states_not_answered = { "states":not_answered,}
+new_dataframe = pandas.DataFrame(states_not_answered)
+new_dataframe.to_csv("not_answered.csv")
